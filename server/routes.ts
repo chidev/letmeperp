@@ -9,25 +9,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // API route for generating shareable URLs
-  app.get('/api/generate-url', (req, res) => {
-    const { query } = req.query;
-    
-    if (!query || typeof query !== 'string') {
-      return res.status(400).json({ 
-        error: 'Query parameter is required' 
-      });
-    }
 
-    // Use HOST_URL environment variable if available, otherwise fall back to request host
-    const baseUrl = process.env.HOST_URL || (req.get('host') ? `${req.protocol}://${req.get('host')}` : 'http://localhost:5000');
-    const shareableUrl = `${baseUrl}/?q=${encodeURIComponent(query)}`;
-    
-    res.json({ 
-      url: shareableUrl,
-      query: query.trim()
-    });
-  });
 
   // API route for redirecting to Perplexity
   app.get('/api/redirect', (req, res) => {

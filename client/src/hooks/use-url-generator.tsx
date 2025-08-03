@@ -1,12 +1,21 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
 export const useUrlGenerator = () => {
   const [generatedUrl, setGeneratedUrl] = useState<string>('');
   const [isUrlGenerated, setIsUrlGenerated] = useState(false);
+  const [hostUrl, setHostUrl] = useState<string>('');
   const { toast } = useToast();
 
-  const generateUrl = useCallback(async (query: string) => {
+  // Fetch the configured host URL once on mount
+  useEffect(() => {
+    fetch('/api/config')
+      .then(res => res.json())
+      .then(data => setHostUrl(data.hostUrl))
+      .catch(() => setHostUrl(window.location.origin));
+  }, []);
+
+  const generateUrl = useCallback((query: string) => {
     if (!query.trim()) {
       toast({
         title: "Error",
@@ -16,26 +25,14 @@ export const useUrlGenerator = () => {
       return null;
     }
 
-    try {
-      const response = await fetch(`/api/generate-url?query=${encodeURIComponent(query.trim())}`);
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to generate URL');
-      }
-      
-      setGeneratedUrl(data.url);
-      setIsUrlGenerated(true);
-      return data.url;
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to generate URL. Please try again.",
-        variant: "destructive",
-      });
-      return null;
-    }
-  }, [toast]);
+    const encodedQuery = encodeURIComponent(query.trim());
+    const baseUrl = hostUrl || window.location.origin;
+    const url = `${baseUrl}/?q=${encodedQuery}`;
+    
+    setGeneratedUrl(url);
+    setIsUrlGenerated(true);
+    return url;
+  }, [toast, hostUrl]);
 
   const copyToClipboard = useCallback(async (url?: string) => {
     const urlToCopy = url || generatedUrl;

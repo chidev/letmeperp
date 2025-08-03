@@ -22,12 +22,12 @@ export const Home = () => {
     setIsPreviewOpen(true);
   }, []);
 
-  const handleGenerateLink = async () => {
+  const handleGenerateLink = () => {
     if (!query.trim()) {
       alert('Please enter a search query!');
       return;
     }
-    const url = await generateUrl(query);
+    const url = generateUrl(query);
     if (url) {
       setShowShareSection(true);
       // Smooth scroll to share section
@@ -42,15 +42,15 @@ export const Home = () => {
     setPreviewQuery('');
   };
 
-  const handleCopyLink = async () => {
-    const url = await generateUrl(query);
+  const handleCopyLink = () => {
+    const url = generateUrl(query);
     if (url) {
       copyToClipboard(url);
     }
   };
 
-  const handleShareOnTwitter = async () => {
-    const url = await generateUrl(query);
+  const handleShareOnTwitter = () => {
+    const url = generateUrl(query);
     if (url) {
       const tweetText = encodeURIComponent('Here, let me search that for you: ');
       window.open(`https://twitter.com/intent/tweet?text=${tweetText}&url=${encodeURIComponent(url)}`, '_blank');
