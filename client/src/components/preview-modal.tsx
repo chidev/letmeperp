@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 interface PreviewModalProps {
   isOpen: boolean;
@@ -9,112 +7,96 @@ interface PreviewModalProps {
   query: string;
 }
 
-const animationSteps = [
-  { id: 1, text: "Go to perplexity.ai", icon: "🌐" },
-  { id: 2, text: "Click on the search box", icon: "🔍" },
-  { id: 3, text: "Type your question", icon: "⌨️" },
-  { id: 4, text: "Press Enter or click search", icon: "🚀" },
-];
-
 export const PreviewModal = ({ isOpen, onClose, query }: PreviewModalProps) => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [typedText, setTypedText] = useState('');
+  const [showResults, setShowResults] = useState(false);
+  const [showReadyMessage, setShowReadyMessage] = useState(false);
 
-  const startAnimation = () => {
-    setIsAnimating(true);
-    setCurrentStep(0);
-    
-    const interval = setInterval(() => {
-      setCurrentStep((prev) => {
-        if (prev < animationSteps.length - 1) {
-          return prev + 1;
-        } else {
-          clearInterval(interval);
+  const typeText = (text: string, index: number = 0) => {
+    if (index < text.length) {
+      setTypedText(text.slice(0, index + 1));
+      setTimeout(() => typeText(text, index + 1), 80);
+    } else {
+      // Show results after typing completes
+      setTimeout(() => {
+        setShowResults(true);
+        
+        // Show ready message after 2 seconds
+        setTimeout(() => {
+          setShowReadyMessage(true);
+          
+          // Redirect after another 2 seconds
           setTimeout(() => {
-            // Redirect to Perplexity with the search query
             const perplexityUrl = `https://www.perplexity.ai/?q=${encodeURIComponent(query)}`;
             window.open(perplexityUrl, '_blank');
             onClose();
-          }, 1000);
-          return prev;
-        }
-      });
-    }, 1500);
+          }, 2000);
+        }, 2000);
+      }, 500);
+    }
   };
 
   const resetAnimation = () => {
-    setCurrentStep(0);
-    setIsAnimating(false);
+    setTypedText('');
+    setShowResults(false);
+    setShowReadyMessage(false);
   };
 
   useEffect(() => {
     if (!isOpen) {
       resetAnimation();
-    } else if (isOpen && !isAnimating) {
+    } else if (isOpen && !typedText) {
       // Auto-start animation when modal opens
       setTimeout(() => {
-        startAnimation();
+        typeText(query);
       }, 500);
     }
-  }, [isOpen, isAnimating]);
+  }, [isOpen, query]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl w-full max-h-[90vh] overflow-hidden">
-        <DialogHeader className="border-b border-[hsl(var(--perplexity-border))] pb-4">
-          <DialogTitle className="text-xl font-semibold text-white">Preview Search</DialogTitle>
-        </DialogHeader>
-        
+      <DialogContent className="max-w-4xl w-full max-h-[90vh] overflow-hidden border-[var(--border)]" style={{ backgroundColor: 'var(--muted)' }}>
         <div className="p-6">
-          <div className="bg-[hsl(var(--perplexity-dark))] rounded-xl p-8 text-center">
-            <div className="text-2xl font-semibold mb-8 text-white">
-              How to search on Perplexity:
+          <h3 className="text-white mb-5 font-medium text-xl text-center">Preview Animation:</h3>
+          
+          <div className="clean-section min-h-[400px] flex flex-col justify-center" style={{ backgroundColor: 'var(--background)', marginBottom: 0 }}>
+            {/* Fake Perplexity Logo */}
+            <div className="flex items-center justify-center gap-2 mb-8">
+              <span className="clean-logo">perplexity</span>
+              <span className="clean-logo-badge">max</span>
             </div>
             
-            <div className="space-y-6 text-left max-w-md mx-auto">
-              <AnimatePresence>
-                {animationSteps.map((step, index) => (
-                  <motion.div
-                    key={step.id}
-                    initial={{ opacity: 0.3, scale: 0.95 }}
-                    animate={{
-                      opacity: currentStep >= index ? 1 : 0.3,
-                      scale: currentStep >= index ? 1 : 0.95,
-                    }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
-                    className={`flex items-center space-x-4 p-4 rounded-lg transition-all duration-500 ${
-                      currentStep >= index 
-                        ? 'bg-[hsl(var(--perplexity-orange))]/20 border border-[hsl(var(--perplexity-orange))]/40' 
-                        : 'bg-gray-800/30'
-                    }`}
-                  >
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold transition-all duration-500 ${
-                      currentStep >= index ? 'bg-[hsl(var(--perplexity-orange))]' : 'bg-gray-600'
-                    }`}>
-                      {currentStep >= index ? step.icon : step.id}
-                    </div>
-                    <span className="text-white">{step.text}</span>
-                    {index === 2 && currentStep >= index && (
-                      <motion.div
-                        initial={{ opacity: 0, width: 0 }}
-                        animate={{ opacity: 1, width: "auto" }}
-                        className="ml-2 px-2 py-1 bg-gray-700 rounded text-sm font-mono text-[hsl(var(--perplexity-orange))]"
-                      >
-                        "{query}"
-                      </motion.div>
-                    )}
-                  </motion.div>
-                ))}
-              </AnimatePresence>
+            {/* Fake Search Container */}
+            <div className="clean-search-container max-w-[600px] mx-auto mb-8">
+              <span className="text-white text-base">{typedText}</span>
+              {!showResults && <span className="typing-cursor"></span>}
             </div>
             
-            <div className="mt-8">
-              <div className="flex items-center justify-center space-x-2">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[hsl(var(--perplexity-orange))]"></div>
-                <span className="text-[hsl(var(--perplexity-text))]">
-                  {currentStep === animationSteps.length - 1 ? 'Redirecting to Perplexity...' : 'Playing animation...'}
-                </span>
-              </div>
+            {/* Fake Results */}
+            <div className={`text-center text-[var(--text-secondary)] transition-opacity duration-500 ${showResults ? 'opacity-100' : 'opacity-0'}`}>
+              {!showReadyMessage ? (
+                <>
+                  <p className="mb-2">
+                    Searching<span className="inline-block animate-pulse">...</span>
+                  </p>
+                  <p className="text-sm">Processing your query with AI-powered search</p>
+                </>
+              ) : (
+                <>
+                  <p className="mb-2" style={{ color: 'var(--primary)' }}>✓ Ready!</p>
+                  <p className="mb-4">Redirecting to Perplexity.ai...</p>
+                  <p className="text-sm">
+                    <a 
+                      href={`https://www.perplexity.ai/?q=${encodeURIComponent(query)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[var(--primary)] hover:underline"
+                    >
+                      Click here if not redirected automatically
+                    </a>
+                  </p>
+                </>
+              )}
             </div>
           </div>
         </div>
