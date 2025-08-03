@@ -31,7 +31,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
 
-    const perplexityUrl = `https://www.perplexity.ai/search?q=${encodeURIComponent(query)}`;
+    const perplexityUrl = `https://www.perplexity.ai/?q=${encodeURIComponent(query)}`;
     
     res.json({ 
       redirectUrl: perplexityUrl,

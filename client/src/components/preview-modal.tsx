@@ -32,7 +32,7 @@ export const PreviewModal = ({ isOpen, onClose, query }: PreviewModalProps) => {
           clearInterval(interval);
           setTimeout(() => {
             // Redirect to Perplexity with the search query
-            const perplexityUrl = `https://www.perplexity.ai/search?q=${encodeURIComponent(query)}`;
+            const perplexityUrl = `https://www.perplexity.ai/?q=${encodeURIComponent(query)}`;
             window.open(perplexityUrl, '_blank');
             onClose();
           }, 1000);
@@ -50,8 +50,13 @@ export const PreviewModal = ({ isOpen, onClose, query }: PreviewModalProps) => {
   useEffect(() => {
     if (!isOpen) {
       resetAnimation();
+    } else if (isOpen && !isAnimating) {
+      // Auto-start animation when modal opens
+      setTimeout(() => {
+        startAnimation();
+      }, 500);
     }
-  }, [isOpen]);
+  }, [isOpen, isAnimating]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -104,22 +109,12 @@ export const PreviewModal = ({ isOpen, onClose, query }: PreviewModalProps) => {
             </div>
             
             <div className="mt-8">
-              {!isAnimating ? (
-                <Button
-                  variant="perplexity"
-                  onClick={startAnimation}
-                  className="px-8 py-3 rounded-lg font-medium"
-                >
-                  Start Animation
-                </Button>
-              ) : (
-                <div className="flex items-center justify-center space-x-2">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[hsl(var(--perplexity-orange))]"></div>
-                  <span className="text-[hsl(var(--perplexity-text))]">
-                    {currentStep === animationSteps.length - 1 ? 'Redirecting to Perplexity...' : 'Playing animation...'}
-                  </span>
-                </div>
-              )}
+              <div className="flex items-center justify-center space-x-2">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[hsl(var(--perplexity-orange))]"></div>
+                <span className="text-[hsl(var(--perplexity-text))]">
+                  {currentStep === animationSteps.length - 1 ? 'Redirecting to Perplexity...' : 'Playing animation...'}
+                </span>
+              </div>
             </div>
           </div>
         </div>

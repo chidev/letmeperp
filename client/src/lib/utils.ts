@@ -21,5 +21,5 @@ export function extractQueryFromUrl(url: string): string | null {
 }
 
 export function getPerplexitySearchUrl(query: string): string {
-  return `https://www.perplexity.ai/search?q=${encodeURIComponent(query)}`;
+  return `https://www.perplexity.ai/?q=${encodeURIComponent(query)}`;
 }

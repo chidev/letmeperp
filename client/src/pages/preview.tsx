@@ -10,7 +10,7 @@ export const Preview = () => {
     const query = urlParams.get('q') || '';
     
     if (query) {
-      const perplexityUrl = `https://www.perplexity.ai/search?q=${encodeURIComponent(query)}`;
+      const perplexityUrl = `https://www.perplexity.ai/?q=${encodeURIComponent(query)}`;
       window.location.href = perplexityUrl;
     } else {
       // Redirect to home if no query
