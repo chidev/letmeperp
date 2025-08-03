@@ -10,11 +10,8 @@ export const Home = () => {
   const [previewQuery, setPreviewQuery] = useState('');
   const [query, setQuery] = useState('');
   const [showShareSection, setShowShareSection] = useState(false);
+  const [hasInitialized, setHasInitialized] = useState(false);
   const { generateUrl, copyToClipboard } = useUrlGenerator();
-
-  // Check if there's a query parameter in the URL
-  const urlParams = new URLSearchParams(location.split('?')[1] || '');
-  const urlQuery = urlParams.get('q') || '';
 
   const handlePreview = (searchQuery: string) => {
     if (!searchQuery.trim()) {
@@ -62,13 +59,19 @@ export const Home = () => {
 
   // Handle URL query parameter on component mount
   useEffect(() => {
-    if (urlQuery && !isPreviewOpen && !previewQuery) {
-      // Set the query in the input field
-      setQuery(urlQuery);
-      // Auto-start the preview animation for shared links
-      handlePreview(urlQuery);
+    if (!hasInitialized) {
+      const urlParams = new URLSearchParams(location.split('?')[1] || '');
+      const urlQuery = urlParams.get('q') || '';
+      
+      if (urlQuery) {
+        // Set the query in the input field
+        setQuery(urlQuery);
+        // Auto-start the preview animation for shared links
+        handlePreview(urlQuery);
+      }
+      setHasInitialized(true);
     }
-  }, [urlQuery]);
+  }, [location, hasInitialized]);
 
   return (
     <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--background)' }}>
