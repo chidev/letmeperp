@@ -1,19 +1,10 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
 export const useUrlGenerator = () => {
   const [generatedUrl, setGeneratedUrl] = useState<string>('');
   const [isUrlGenerated, setIsUrlGenerated] = useState(false);
-  const [hostUrl, setHostUrl] = useState<string>('');
   const { toast } = useToast();
-
-  // Fetch the configured host URL once on mount
-  useEffect(() => {
-    fetch('/api/config')
-      .then(res => res.json())
-      .then(data => setHostUrl(data.hostUrl))
-      .catch(() => setHostUrl(window.location.origin));
-  }, []);
 
   const generateUrl = useCallback((query: string) => {
     if (!query.trim()) {
@@ -26,13 +17,12 @@ export const useUrlGenerator = () => {
     }
 
     const encodedQuery = encodeURIComponent(query.trim());
-    const baseUrl = hostUrl || window.location.origin;
-    const url = `${baseUrl}/?q=${encodedQuery}`;
+    const url = `${window.location.origin}/?q=${encodedQuery}`;
     
     setGeneratedUrl(url);
     setIsUrlGenerated(true);
     return url;
-  }, [toast, hostUrl]);
+  }, [toast]);
 
   const copyToClipboard = useCallback(async (url?: string) => {
     const urlToCopy = url || generatedUrl;
