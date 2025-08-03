@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface PreviewModalProps {
   isOpen: boolean;
@@ -56,6 +56,9 @@ export const PreviewModal = ({ isOpen, onClose, query }: PreviewModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl w-full max-h-[90vh] overflow-hidden border-[var(--border)]" style={{ backgroundColor: 'var(--muted)' }}>
+        <DialogHeader className="sr-only">
+          <DialogTitle>Preview Animation</DialogTitle>
+        </DialogHeader>
         <div className="p-6">
           <h3 className="text-white mb-5 font-medium text-xl text-center">Preview Animation:</h3>
           

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { PreviewModal } from '@/components/preview-modal';
 import { useLocation } from 'wouter';
 import { useUrlGenerator } from '@/hooks/use-url-generator';
@@ -60,10 +60,12 @@ export const Home = () => {
     }
   };
 
-  // If there's a query in the URL, automatically start the preview
-  if (urlQuery && !isPreviewOpen && !previewQuery) {
-    handlePreview(urlQuery);
-  }
+  // Handle URL query parameter on component mount
+  useEffect(() => {
+    if (urlQuery && !isPreviewOpen && !previewQuery) {
+      handlePreview(urlQuery);
+    }
+  }, [urlQuery]);
 
   return (
     <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--background)' }}>
