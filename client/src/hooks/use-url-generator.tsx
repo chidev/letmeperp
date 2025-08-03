@@ -6,7 +6,7 @@ export const useUrlGenerator = () => {
   const [isUrlGenerated, setIsUrlGenerated] = useState(false);
   const { toast } = useToast();
 
-  const generateUrl = useCallback((query: string) => {
+  const generateUrl = useCallback(async (query: string) => {
     if (!query.trim()) {
       toast({
         title: "Error",
@@ -16,13 +16,25 @@ export const useUrlGenerator = () => {
       return null;
     }
 
-    const encodedQuery = encodeURIComponent(query.trim());
-    const baseUrl = window.location.origin;
-    const url = `${baseUrl}/?q=${encodedQuery}`;
-    
-    setGeneratedUrl(url);
-    setIsUrlGenerated(true);
-    return url;
+    try {
+      const response = await fetch(`/api/generate-url?query=${encodeURIComponent(query.trim())}`);
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to generate URL');
+      }
+      
+      setGeneratedUrl(data.url);
+      setIsUrlGenerated(true);
+      return data.url;
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to generate URL. Please try again.",
+        variant: "destructive",
+      });
+      return null;
+    }
   }, [toast]);
 
   const copyToClipboard = useCallback(async (url?: string) => {

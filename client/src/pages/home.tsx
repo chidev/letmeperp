@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { PreviewModal } from '@/components/preview-modal';
 import { useLocation } from 'wouter';
 import { useUrlGenerator } from '@/hooks/use-url-generator';
@@ -13,21 +13,21 @@ export const Home = () => {
   const [hasInitialized, setHasInitialized] = useState(false);
   const { generateUrl, copyToClipboard } = useUrlGenerator();
 
-  const handlePreview = (searchQuery: string) => {
+  const handlePreview = useCallback((searchQuery: string) => {
     if (!searchQuery.trim()) {
       alert('Please enter a search query!');
       return;
     }
     setPreviewQuery(searchQuery);
     setIsPreviewOpen(true);
-  };
+  }, []);
 
-  const handleGenerateLink = () => {
+  const handleGenerateLink = async () => {
     if (!query.trim()) {
       alert('Please enter a search query!');
       return;
     }
-    const url = generateUrl(query);
+    const url = await generateUrl(query);
     if (url) {
       setShowShareSection(true);
       // Smooth scroll to share section
@@ -42,36 +42,35 @@ export const Home = () => {
     setPreviewQuery('');
   };
 
-  const handleCopyLink = () => {
-    const url = generateUrl(query);
+  const handleCopyLink = async () => {
+    const url = await generateUrl(query);
     if (url) {
       copyToClipboard(url);
     }
   };
 
-  const handleShareOnTwitter = () => {
-    const url = generateUrl(query);
+  const handleShareOnTwitter = async () => {
+    const url = await generateUrl(query);
     if (url) {
       const tweetText = encodeURIComponent('Here, let me search that for you: ');
       window.open(`https://twitter.com/intent/tweet?text=${tweetText}&url=${encodeURIComponent(url)}`, '_blank');
     }
   };
 
-  // Handle URL query parameter on component mount
+  // Handle URL query parameter on component mount - run only once
   useEffect(() => {
-    if (!hasInitialized) {
-      const urlParams = new URLSearchParams(location.split('?')[1] || '');
-      const urlQuery = urlParams.get('q') || '';
-      
-      if (urlQuery) {
-        // Set the query in the input field
-        setQuery(urlQuery);
-        // Auto-start the preview animation for shared links
-        handlePreview(urlQuery);
-      }
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlQuery = urlParams.get('q');
+    
+    if (urlQuery && !hasInitialized) {
+      setQuery(urlQuery);
+      setPreviewQuery(urlQuery);
+      setIsPreviewOpen(true);
+      setHasInitialized(true);
+    } else if (!hasInitialized) {
       setHasInitialized(true);
     }
-  }, [location, hasInitialized]);
+  }, []); // Empty dependency array - run only once on mount
 
   return (
     <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--background)' }}>

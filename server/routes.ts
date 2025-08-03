@@ -2,6 +2,13 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // API route for getting configuration
+  app.get('/api/config', (req, res) => {
+    res.json({ 
+      hostUrl: process.env.HOST_URL || req.get('host') ? `${req.protocol}://${req.get('host')}` : 'http://localhost:5000'
+    });
+  });
+
   // API route for generating shareable URLs
   app.get('/api/generate-url', (req, res) => {
     const { query } = req.query;
@@ -12,7 +19,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
 
-    const baseUrl = req.get('host') ? `${req.protocol}://${req.get('host')}` : 'http://localhost:5000';
+    // Use HOST_URL environment variable if available, otherwise fall back to request host
+    const baseUrl = process.env.HOST_URL || (req.get('host') ? `${req.protocol}://${req.get('host')}` : 'http://localhost:5000');
     const shareableUrl = `${baseUrl}/?q=${encodeURIComponent(query)}`;
     
     res.json({ 
