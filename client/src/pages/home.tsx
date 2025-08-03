@@ -63,6 +63,9 @@ export const Home = () => {
   // Handle URL query parameter on component mount
   useEffect(() => {
     if (urlQuery && !isPreviewOpen && !previewQuery) {
+      // Set the query in the input field
+      setQuery(urlQuery);
+      // Auto-start the preview animation for shared links
       handlePreview(urlQuery);
     }
   }, [urlQuery]);

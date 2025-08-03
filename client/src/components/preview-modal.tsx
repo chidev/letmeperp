@@ -11,6 +11,7 @@ export const PreviewModal = ({ isOpen, onClose, query }: PreviewModalProps) => {
   const [typedText, setTypedText] = useState('');
   const [showResults, setShowResults] = useState(false);
   const [showReadyMessage, setShowReadyMessage] = useState(false);
+  const [isFromSharedLink, setIsFromSharedLink] = useState(false);
 
   const typeText = (text: string, index: number = 0) => {
     if (index < text.length) {
@@ -25,12 +26,13 @@ export const PreviewModal = ({ isOpen, onClose, query }: PreviewModalProps) => {
         setTimeout(() => {
           setShowReadyMessage(true);
           
-          // Redirect after another 2 seconds
-          setTimeout(() => {
-            const perplexityUrl = `https://www.perplexity.ai/?q=${encodeURIComponent(query)}`;
-            window.open(perplexityUrl, '_blank');
-            onClose();
-          }, 2000);
+          // Only redirect if this is from a shared link (not preview mode)
+          if (isFromSharedLink) {
+            setTimeout(() => {
+              const perplexityUrl = `https://www.perplexity.ai/?q=${encodeURIComponent(query)}`;
+              window.location.href = perplexityUrl; // Use location.href for full redirect
+            }, 2000);
+          }
         }, 2000);
       }, 500);
     }
@@ -43,6 +45,11 @@ export const PreviewModal = ({ isOpen, onClose, query }: PreviewModalProps) => {
   };
 
   useEffect(() => {
+    // Check if this is from a shared link (URL has query parameter)
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlQuery = urlParams.get('q');
+    setIsFromSharedLink(!!urlQuery);
+
     if (!isOpen) {
       resetAnimation();
     } else if (isOpen && !typedText) {
@@ -60,7 +67,16 @@ export const PreviewModal = ({ isOpen, onClose, query }: PreviewModalProps) => {
           <DialogTitle>Preview Animation</DialogTitle>
         </DialogHeader>
         <div className="p-6">
-          <h3 className="text-white mb-5 font-medium text-xl text-center">Preview Animation:</h3>
+          <h3 className="text-white mb-5 font-medium text-xl text-center">
+            {isFromSharedLink ? 'Preparing your search...' : 'Preview Animation:'}
+          </h3>
+          {!isFromSharedLink && (
+            <div className="mb-4 p-3 bg-blue-900/20 border border-blue-500/30 rounded-lg text-center">
+              <p className="text-blue-300 text-sm">
+                🎭 Preview Mode - This is just a demonstration. No actual redirect will occur.
+              </p>
+            </div>
+          )}
           
           <div className="clean-section min-h-[400px] flex flex-col justify-center" style={{ backgroundColor: 'var(--background)', marginBottom: 0 }}>
             {/* Fake Perplexity Logo */}
@@ -87,17 +103,34 @@ export const PreviewModal = ({ isOpen, onClose, query }: PreviewModalProps) => {
               ) : (
                 <>
                   <p className="mb-2" style={{ color: 'var(--primary)' }}>✓ Ready!</p>
-                  <p className="mb-4">Redirecting to Perplexity.ai...</p>
-                  <p className="text-sm">
-                    <a 
-                      href={`https://www.perplexity.ai/?q=${encodeURIComponent(query)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[var(--primary)] hover:underline"
-                    >
-                      Click here if not redirected automatically
-                    </a>
-                  </p>
+                  {isFromSharedLink ? (
+                    <>
+                      <p className="mb-4">Redirecting to Perplexity.ai...</p>
+                      <p className="text-sm">
+                        <a 
+                          href={`https://www.perplexity.ai/?q=${encodeURIComponent(query)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[var(--primary)] hover:underline"
+                        >
+                          Click here if not redirected automatically
+                        </a>
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="mb-4">This is how your link will work!</p>
+                      <p className="text-sm text-[var(--text-muted)]">
+                        When someone visits your generated link, they'll see this animation and then be redirected to Perplexity.ai
+                      </p>
+                      <button 
+                        onClick={onClose}
+                        className="mt-4 clean-btn clean-btn-primary"
+                      >
+                        Close Preview
+                      </button>
+                    </>
+                  )}
                 </>
               )}
             </div>
