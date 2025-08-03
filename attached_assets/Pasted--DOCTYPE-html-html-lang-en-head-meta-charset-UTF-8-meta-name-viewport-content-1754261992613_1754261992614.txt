@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Let Me Search That For You - Perplexity</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #202222;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .logo-container {
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 400;
+            color: #ffffff;
+            letter-spacing: -1px;
+        }
+
+        .logo-badge {
+            background-color: #FFD700;
+            color: #000000;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-left: 5px;
+        }
+
+        .tagline {
+            font-size: 1rem;
+            color: #8e8e8e;
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 30px;
+            background-color: #2a2b2b;
+            border: 1px solid #3a3b3b;
+            border-radius: 12px;
+            padding: 16px;
+            transition: border-color 0.2s ease;
+        }
+
+        .search-container:hover {
+            border-color: #4a4b4b;
+        }
+
+        .search-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            font-size: 1rem;
+            outline: none;
+            font-weight: 400;
+        }
+
+        .search-input::placeholder {
+            color: #6b6b6b;
+        }
+
+        .search-icons {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: none;
+            color: #6b6b6b;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-btn:hover {
+            color: #ffffff;
+            background-color: #3a3b3b;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            font-size: 0.95rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background-color: #FFD700;
+            color: #000000;
+        }
+
+        .btn-primary:hover {
+            background-color: #FFE234;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: #ffffff;
+            border: 1px solid #3a3b3b;
+        }
+
+        .btn-secondary:hover {
+            background-color: #2a2b2b;
+            border-color: #4a4b4b;
+        }
+
+        .share-section {
+            background-color: #2a2b2b;
+            border: 1px solid #3a3b3b;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .share-section h3 {
+            color: #ffffff;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .share-link {
+            background-color: #202222;
+            border: 1px solid #3a3b3b;
+            padding: 14px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            word-break: break-all;
+            color: #ffffff;
+            font-family: 'SF Mono', Monaco, 'Cascadia Mono', monospace;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .share-link:hover {
+            border-color: #4a4b4b;
+            background-color: #2a2b2b;
+        }
+
+        .share-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .preview-section {
+            background-color: #2a2b2b;
+            border: 1px solid #3a3b3b;
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 30px;
+            min-height: 400px;
+            display: none;
+        }
+
+        .preview-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .preview-header {
+            color: #ffffff;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .fake-perplexity {
+            background-color: #202222;
+            border-radius: 12px;
+            padding: 40px 20px;
+            min-height: 300px;
+        }
+
+        .fake-logo {
+            font-size: 2rem;
+            color: #ffffff;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .fake-search-container {
+            background-color: #2a2b2b;
+            border: 1px solid #3a3b3b;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 0 auto 30px;
+            max-width: 600px;
+            text-align: left;
+            position: relative;
+        }
+
+        .typing-text {
+            color: #ffffff;
+            font-size: 1rem;
+            display: inline-block;
+            min-height: 24px;
+        }
+
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 20px;
+            background-color: #FFD700;
+            animation: blink 1s infinite;
+            vertical-align: text-bottom;
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .fake-results {
+            color: #8e8e8e;
+            line-height: 1.6;
+            text-align: center;
+            opacity: 0;
+            margin-top: 40px;
+        }
+
+        .fake-results.show {
+            opacity: 1;
+            transition: opacity 0.5s ease-in;
+        }
+
+        .loading-dots {
+            display: inline-block;
+        }
+
+        .loading-dots::after {
+            content: '';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+
+        @keyframes dots {
+            0% { content: ''; }
+            25% { content: '.'; }
+            50% { content: '..'; }
+            75% { content: '...'; }
+            100% { content: ''; }
+        }
+
+        .social-links {
+            margin-top: 40px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .social-link {
+            color: #6b6b6b;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s ease;
+        }
+
+        .social-link:hover {
+            color: #ffffff;
+        }
+
+        /* Icons */
+        .icon {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        @media (max-width: 600px) {
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .button-group {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+
+            .share-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-container">
+            <h1 class="logo">perplexity<span class="logo-badge">max</span></h1>
+        </div>
+        <p class="tagline">Let Me Search That For You...</p>
+        
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="Ask anything. Type @ for mentions and / for shortcuts." autofocus>
+            <div class="search-icons">
+                <button class="icon-btn" title="Search">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <div class="button-group">
+            <button class="btn btn-primary" onclick="generateLink()">Generate Link</button>
+            <button class="btn btn-secondary" onclick="previewAnimation()">Preview Animation</button>
+        </div>
+        
+        <div id="shareSection" class="share-section">
+            <h3>All done! Share the link below:</h3>
+            <div class="share-link" id="shareLink" onclick="copyLink()">Click to copy link</div>
+            <div class="share-buttons">
+                <button class="btn btn-primary" onclick="copyLink()">Copy URL</button>
+                <button class="btn btn-secondary" onclick="shareOnTwitter()">Share on X</button>
+                <button class="btn btn-secondary" onclick="shortenLink()">Shorten Link</button>
+            </div>
+        </div>
+        
+        <div id="previewSection" class="preview-section">
+            <h3 class="preview-header">Preview Animation:</h3>
+            <div class="fake-perplexity">
+                <div class="fake-logo">
+                    perplexity<span class="logo-badge">max</span>
+                </div>
+                <div class="fake-search-container">
+                    <span class="typing-text" id="typingText"></span>
+                    <span class="typing-cursor" id="cursor"></span>
+                </div>
+                <div class="fake-results" id="fakeResults">
+                    <p>Searching<span class="loading-dots"></span></p>
+                    <p style="margin-top: 10px; font-size: 0.9rem;">Processing your query with AI-powered search</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="social-links">
+            <a href="#" class="social-link">About</a>
+            <a href="#" class="social-link">Privacy</a>
+            <a href="#" class="social-link">Terms</a>
+            <a href="#" class="social-link">Contact</a>
+        </div>
+    </div>
+    
+    <script>
+        let animationTimeout;
+        
+        function generateLink() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) {
+                alert('Please enter a search query!');
+                return;
+            }
+            
+            const baseUrl = window.location.origin + window.location.pathname;
+            const encodedQuery = encodeURIComponent(query);
+            const fullUrl = `${baseUrl}?q=${encodedQuery}`;
+            
+            document.getElementById('shareLink').textContent = fullUrl;
+            document.getElementById('shareSection').style.display = 'block';
+            
+            // Smooth scroll to share section
+            document.getElementById('shareSection').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        function copyLink() {
+            const linkText = document.getElementById('shareLink').textContent;
+            navigator.clipboard.writeText(linkText).then(() => {
+                const originalText = document.getElementById('shareLink').textContent;
+                document.getElementById('shareLink').textContent = '✓ Copied to clipboard!';
+                document.getElementById('shareLink').style.color = '#FFD700';
+                setTimeout(() => {
+                    document.getElementById('shareLink').textContent = originalText;
+                    document.getElementById('shareLink').style.color = '#ffffff';
+                }, 2000);
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = linkText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                const originalText = document.getElementById('shareLink').textContent;
+                document.getElementById('shareLink').textContent = '✓ Copied!';
+                document.getElementById('shareLink').style.color = '#FFD700';
+                setTimeout(() => {
+                    document.getElementById('shareLink').textContent = originalText;
+                    document.getElementById('shareLink').style.color = '#ffffff';
+                }, 2000);
+            });
+        }
+        
+        function shareOnTwitter() {
+            const linkText = document.getElementById('shareLink').textContent;
+            const tweetText = encodeURIComponent('Here, let me search that for you: ');
+            window.open(`https://twitter.com/intent/tweet?text=${tweetText}&url=${encodeURIComponent(linkText)}`, '_blank');
+        }
+        
+        function shortenLink() {
+            alert('Link shortening feature coming soon!');
+        }
+        
+        function previewAnimation() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) {
+                alert('Please enter a search query!');
+                return;
+            }
+            
+            // Clear any existing animation
+            clearTimeout(animationTimeout);
+            
+            // Reset preview
+            document.getElementById('previewSection').classList.add('active');
+            document.getElementById('typingText').textContent = '';
+            document.getElementById('fakeResults').classList.remove('show');
+            document.getElementById('cursor').style.display = 'inline-block';
+            
+            // Smooth scroll to preview
+            document.getElementById('previewSection').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            
+            // Start typing animation
+            typeText(query, 0);
+        }
+        
+        function typeText(text, index) {
+            if (index < text.length) {
+                document.getElementById('typingText').textContent += text[index];
+                animationTimeout = setTimeout(() => typeText(text, index + 1), 80);
+            } else {
+                // Show results after typing completes
+                setTimeout(() => {
+                    document.getElementById('cursor').style.display = 'none';
+                    document.getElementById('fakeResults').classList.add('show');
+                    
+                    // Simulate redirect after 2 seconds
+                    setTimeout(() => {
+                        const perplexityUrl = `https://www.perplexity.ai/search?q=${encodeURIComponent(text)}`;
+                        document.getElementById('fakeResults').innerHTML = `
+                            <p style="color: #FFD700;">✓ Ready!</p>
+                            <p style="margin-top: 10px;">Redirecting to Perplexity.ai...</p>
+                            <p style="margin-top: 15px; font-size: 0.85rem;">
+                                <a href="${perplexityUrl}" target="_blank" style="color: #FFD700; text-decoration: none;">Click here if not redirected automatically</a>
+                            </p>
+                        `;
+                    }, 2000);
+                }, 500);
+            }
+        }
+        
+        // Check for query parameter on page load
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const query = urlParams.get('q');
+            
+            if (query) {
+                document.getElementById('searchInput').value = query;
+                // Hide the main interface
+                document.querySelector('.tagline').style.display = 'none';
+                document.querySelector('.search-container').style.display = 'none';
+                document.querySelector('.button-group').style.display = 'none';
+                document.querySelector('.social-links').style.display = 'none';
+                
+                // Show preview section immediately
+                document.getElementById('previewSection').style.display = 'block';
+                document.getElementById('previewSection').classList.add('active');
+                
+                // Start animation after a brief delay
+                setTimeout(() => {
+                    typeText(query, 0);
+                    
+                    // Actually redirect after animation completes
+                    setTimeout(() => {
+                        window.location.href = `https://www.perplexity.ai/search?q=${encodeURIComponent(query)}`;
+                    }, 5000);
+                }, 500);
+            }
+        };
+        
+        // Add enter key support
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                generateLink();
+            }
+        });
+    </script>
+</body>
+</html>

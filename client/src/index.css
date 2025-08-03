@@ -3,86 +3,200 @@
 @tailwind utilities;
 
 :root {
-  --background: hsl(0, 0%, 100%);
-  --foreground: hsl(20, 14.3%, 4.1%);
-  --muted: hsl(60, 4.8%, 95.9%);
-  --muted-foreground: hsl(25, 5.3%, 44.7%);
-  --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(20, 14.3%, 4.1%);
-  --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(20, 14.3%, 4.1%);
-  --border: hsl(20, 5.9%, 90%);
-  --input: hsl(20, 5.9%, 90%);
-  --primary: hsl(207, 90%, 54%);
-  --primary-foreground: hsl(211, 100%, 99%);
-  --secondary: hsl(60, 4.8%, 95.9%);
-  --secondary-foreground: hsl(24, 9.8%, 10%);
-  --accent: hsl(60, 4.8%, 95.9%);
-  --accent-foreground: hsl(24, 9.8%, 10%);
+  /* Clean minimal colors matching the HTML design */
+  --background: #202222;
+  --foreground: #ffffff;
+  --muted: #2a2b2b;
+  --muted-foreground: #8e8e8e;
+  --border: #3a3b3b;
+  --input: #2a2b2b;
+  --primary: #FFD700;
+  --primary-foreground: #000000;
+  --secondary: #2a2b2b;
+  --secondary-foreground: #ffffff;
+  --accent: #3a3b3b;
+  --accent-foreground: #ffffff;
   --destructive: hsl(0, 84.2%, 60.2%);
   --destructive-foreground: hsl(60, 9.1%, 97.8%);
-  --ring: hsl(20, 14.3%, 4.1%);
-  --radius: 0.5rem;
+  --ring: #FFD700;
+  --radius: 12px;
   
-  /* Perplexity-specific colors */
-  --perplexity-dark: hsl(0, 0%, 10.2%);
-  --perplexity-gray: hsl(0, 0%, 16.5%);
-  --perplexity-orange: hsl(13, 100%, 60%);
-  --perplexity-border: hsl(0, 0%, 25.1%);
-  --perplexity-text: hsl(0, 0%, 62.7%);
-}
-
-.dark {
-  --background: hsl(0, 0%, 10.2%);
-  --foreground: hsl(0, 0%, 98%);
-  --muted: hsl(0, 0%, 16.5%);
-  --muted-foreground: hsl(0, 0%, 62.7%);
-  --popover: hsl(0, 0%, 16.5%);
-  --popover-foreground: hsl(0, 0%, 98%);
-  --card: hsl(0, 0%, 16.5%);
-  --card-foreground: hsl(0, 0%, 98%);
-  --border: hsl(0, 0%, 25.1%);
-  --input: hsl(0, 0%, 10.2%);
-  --primary: hsl(13, 100%, 60%);
-  --primary-foreground: hsl(0, 0%, 98%);
-  --secondary: hsl(0, 0%, 16.5%);
-  --secondary-foreground: hsl(0, 0%, 98%);
-  --accent: hsl(0, 0%, 16.5%);
-  --accent-foreground: hsl(0, 0%, 98%);
-  --destructive: hsl(0, 62.8%, 30.6%);
-  --destructive-foreground: hsl(0, 0%, 98%);
-  --ring: hsl(0, 0%, 83.9%);
-  --radius: 0.5rem;
+  /* Text colors */
+  --text-primary: #ffffff;
+  --text-secondary: #8e8e8e;
+  --text-muted: #6b6b6b;
 }
 
 @layer base {
   * {
-    @apply border-border;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
   }
 
   body {
-    @apply font-sans antialiased bg-background text-foreground;
-  }
-
-  html, body {
-    @apply dark;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--background);
+    color: var(--foreground);
+    min-height: 100vh;
+    @apply antialiased;
   }
 }
 
 @layer components {
-  .perplexity-input {
-    @apply bg-[hsl(var(--perplexity-dark))] border-[hsl(var(--perplexity-border))] text-white placeholder-[hsl(var(--perplexity-text))] focus:ring-[hsl(var(--perplexity-orange))] focus:border-transparent;
+  .clean-container {
+    width: 100%;
+    max-width: 800px;
+    padding: 20px;
+    text-align: center;
+    margin: 0 auto;
   }
-  
-  .perplexity-card {
-    @apply bg-[hsl(var(--perplexity-gray))] border-[hsl(var(--perplexity-border))];
+
+  .clean-logo {
+    font-size: 2.5rem;
+    font-weight: 400;
+    color: var(--text-primary);
+    letter-spacing: -1px;
   }
-  
-  .perplexity-button {
-    @apply bg-[hsl(var(--perplexity-orange))] hover:bg-orange-600 text-white;
+
+  .clean-logo-badge {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: inline-block;
+    margin-left: 5px;
   }
-  
-  .perplexity-text {
-    @apply text-[hsl(var(--perplexity-text))];
+
+  .clean-tagline {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 40px;
+    font-weight: 400;
+  }
+
+  .clean-search-container {
+    position: relative;
+    margin-bottom: 30px;
+    background-color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    transition: border-color 0.2s ease;
+  }
+
+  .clean-search-container:hover {
+    border-color: #4a4b4b;
+  }
+
+  .clean-search-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1rem;
+    outline: none;
+    font-weight: 400;
+  }
+
+  .clean-search-input::placeholder {
+    color: var(--text-muted);
+  }
+
+  .clean-btn {
+    padding: 12px 24px;
+    font-size: 0.95rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .clean-btn-primary {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+  }
+
+  .clean-btn-primary:hover {
+    background-color: #FFE234;
+    transform: translateY(-1px);
+  }
+
+  .clean-btn-secondary {
+    background-color: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+  }
+
+  .clean-btn-secondary:hover {
+    background-color: var(--muted);
+    border-color: #4a4b4b;
+  }
+
+  .clean-section {
+    background-color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 30px;
+    border-radius: var(--radius);
+    margin-bottom: 30px;
+  }
+
+  .clean-share-link {
+    background-color: var(--background);
+    border: 1px solid var(--border);
+    padding: 14px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    word-break: break-all;
+    color: var(--text-primary);
+    font-family: 'SF Mono', Monaco, 'Cascadia Mono', monospace;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .clean-share-link:hover {
+    border-color: #4a4b4b;
+    background-color: var(--muted);
+  }
+
+  .typing-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 20px;
+    background-color: var(--primary);
+    animation: blink 1s infinite;
+    vertical-align: text-bottom;
+    margin-left: 2px;
+  }
+
+  @keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .fade-in {
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  @media (max-width: 600px) {
+    .clean-logo {
+      font-size: 2rem;
+    }
+    
+    .clean-btn {
+      width: 100%;
+      margin-bottom: 10px;
+    }
   }
 }
