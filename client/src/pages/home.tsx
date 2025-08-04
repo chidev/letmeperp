@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { PreviewModal } from '@/components/preview-modal';
+import { PreviewAnimation } from '@/components/preview-animation';
 import { useLocation } from 'wouter';
-import { useUrlGenerator } from '@/hooks/use-url-generator';
 import { Search } from 'lucide-react';
 
 export const Home = () => {
@@ -11,7 +11,7 @@ export const Home = () => {
   const [query, setQuery] = useState('');
   const [showShareSection, setShowShareSection] = useState(false);
   const [hasInitialized, setHasInitialized] = useState(false);
-  const { generateUrl, copyToClipboard } = useUrlGenerator();
+  const [generatedUrl, setGeneratedUrl] = useState('');
 
   const handlePreview = useCallback((searchQuery: string) => {
     if (!searchQuery.trim()) {
@@ -27,14 +27,14 @@ export const Home = () => {
       alert('Please enter a search query!');
       return;
     }
-    const url = generateUrl(query);
-    if (url) {
-      setShowShareSection(true);
-      // Smooth scroll to share section
-      setTimeout(() => {
-        document.getElementById('shareSection')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }, 100);
-    }
+    const encodedQuery = encodeURIComponent(query.trim());
+    const url = `${window.location.origin}/?q=${encodedQuery}`;
+    setGeneratedUrl(url);
+    setShowShareSection(true);
+    // Smooth scroll to share section
+    setTimeout(() => {
+      document.getElementById('shareSection')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 100);
   };
 
   const handleClosePreview = () => {
@@ -42,35 +42,33 @@ export const Home = () => {
     setPreviewQuery('');
   };
 
-  const handleCopyLink = () => {
-    const url = generateUrl(query);
-    if (url) {
-      copyToClipboard(url);
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(generatedUrl);
+      alert('URL copied to clipboard!');
+    } catch (error) {
+      alert(`Please copy manually: ${generatedUrl}`);
     }
   };
 
   const handleShareOnTwitter = () => {
-    const url = generateUrl(query);
-    if (url) {
-      const tweetText = encodeURIComponent('Here, let me search that for you: ');
-      window.open(`https://twitter.com/intent/tweet?text=${tweetText}&url=${encodeURIComponent(url)}`, '_blank');
-    }
+    const tweetText = encodeURIComponent('Here, let me search that for you: ');
+    window.open(`https://twitter.com/intent/tweet?text=${tweetText}&url=${encodeURIComponent(generatedUrl)}`, '_blank');
   };
 
-  // Handle URL query parameter on component mount - run only once
+  // Check for rickroll mode on mount
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const urlQuery = urlParams.get('q');
-    
-    if (urlQuery && !hasInitialized) {
-      setQuery(urlQuery);
-      setPreviewQuery(urlQuery);
-      setIsPreviewOpen(true);
-      setHasInitialized(true);
-    } else if (!hasInitialized) {
-      setHasInitialized(true);
-    }
-  }, []); // Empty dependency array - run only once on mount
+    if (hasInitialized) return;
+    setHasInitialized(true);
+  }, [hasInitialized]);
+
+  // Early return for rickroll mode
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlQuery = urlParams.get('q');
+  
+  if (urlQuery) {
+    return <PreviewAnimation query={urlQuery} redirect={true} />;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--background)' }}>
@@ -88,8 +86,8 @@ export const Home = () => {
         <div className="clean-search-container">
           <input
             type="text"
-            className="clean-search-input"
-            placeholder="Ask anything. Type @ for mentions and / for shortcuts."
+            className="clean-search-input text-xs"
+            placeholder="What were they too lazy to type into perplexity.ai?"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyPress={(e) => {
@@ -121,7 +119,7 @@ export const Home = () => {
           <div id="shareSection" className="clean-section fade-in">
             <h3 className="text-white mb-5 font-medium">All done! Share the link below:</h3>
             <div className="clean-share-link" onClick={handleCopyLink}>
-              {generateUrl(query)}
+              {generatedUrl}
             </div>
             <div className="flex gap-3 justify-center flex-wrap">
               <button className="clean-btn clean-btn-primary" onClick={handleCopyLink}>

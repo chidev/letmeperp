@@ -8,11 +8,6 @@ export const useUrlGenerator = () => {
 
   const generateUrl = useCallback((query: string) => {
     if (!query.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter a search query first!",
-        variant: "destructive",
-      });
       return null;
     }
 
@@ -22,7 +17,7 @@ export const useUrlGenerator = () => {
     setGeneratedUrl(url);
     setIsUrlGenerated(true);
     return url;
-  }, [toast]);
+  }, []);
 
   const copyToClipboard = useCallback(async (url?: string) => {
     const urlToCopy = url || generatedUrl;
