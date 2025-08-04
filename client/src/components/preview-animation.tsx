@@ -101,7 +101,7 @@ export const PreviewAnimation = ({ query, redirect }: PreviewAnimationProps) => 
           </div>
           
           {/* Fake Results */}
-          <div className={`text-center text-[var(--text-secondary)] transition-opacity hidden duration-500 ${showResults ? 'opacity-100' : 'opacity-0'}`}>
+          <div className={`text-center text-[var(--text-secondary)] transition-opacity duration-500 ${showResults ? 'opacity-100' : 'opacity-0'}`}>
             {!showReadyMessage ? (
               <>
                 <p className="mb-2">
