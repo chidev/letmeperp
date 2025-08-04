@@ -58,10 +58,48 @@ export const PreviewAnimation = ({ query, redirect }: PreviewAnimationProps) => 
             <span className="clean-logo-badge">max</span>
           </div>
           
-          {/* Fake Search Container */}
-          <div className="clean-search-container max-w-[600px] mx-auto mb-8">
-            <span className="text-white text-base">{typedText}</span>
-            {!showResults && <span className="typing-cursor"></span>}
+          {/* Fake Search Container - Perplexity Style */}
+          <div className="max-w-[700px] mx-auto mb-8">
+            <div className="relative bg-[#2f2f2f] rounded-2xl border border-[#404040] p-3">
+              <div className="flex items-center gap-3">
+                {/* Text Area */}
+                <div className="flex-1 relative min-h-[48px] flex items-center">
+                  <span className="text-white text-base">
+                    {typedText}
+                    {!showResults && <span className="typing-cursor"></span>}
+                  </span>
+                  {!typedText && (
+                    <span className="absolute text-gray-400 text-base pointer-events-none">
+                      Ask anything. Type @ for mentions and / for shortcuts.
+                    </span>
+                  )}
+                </div>
+                
+                {/* Right Icons */}
+                <div className="flex items-center gap-2">
+                  {/* Attach Icon */}
+                  <button className="p-2 rounded-lg bg-transparent hover:bg-[#4f4f4f] transition-colors">
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                    </svg>
+                  </button>
+                  
+                  {/* Mic Icon */}
+                  <button className="p-2 rounded-lg bg-transparent hover:bg-[#4f4f4f] transition-colors">
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                    </svg>
+                  </button>
+                  
+                  {/* Submit Button - YELLOW with RIGHT arrow */}
+                  <button className="p-2 rounded-lg bg-[#FFD700] hover:bg-[#FFC107] transition-colors">
+                    <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
           
           {/* Fake Results */}
