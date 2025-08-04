@@ -28,7 +28,7 @@ export const PreviewAnimation = ({ query, redirect }: PreviewAnimationProps) => 
             setTimeout(() => {
               const perplexityUrl = `https://www.perplexity.ai/?q=${encodeURIComponent(query)}`;
               window.location.href = perplexityUrl;
-            }, 2000);
+            }, 50);
           }
         }, 2000);
       }, 500);
@@ -59,51 +59,49 @@ export const PreviewAnimation = ({ query, redirect }: PreviewAnimationProps) => 
           </div>
           
           {/* Fake Search Container - Perplexity Style */}
-          <div className="max-w-[700px] mx-auto mb-8">
-            <div className="relative bg-[#2f2f2f] rounded-2xl border border-[#404040] p-3">
-              <div className="flex items-center gap-3">
-                {/* Text Area */}
-                <div className="flex-1 relative min-h-[48px] flex items-center">
-                  <span className="text-white text-base">
-                    {typedText}
-                    {!showResults && <span className="typing-cursor"></span>}
+          <div className="w-full max-w-4xl mx-auto mb-8 px-4">
+            <div className="relative bg-[#2f2f2f] rounded-2xl border border-[#404040] p-4">
+              {/* Text Area - Full Width */}
+              <div className="relative mb-4">
+                <span className="text-white text-base block leading-relaxed text-left">
+                  {typedText}
+                  {!showResults && <span className="typing-cursor"></span>}
+                </span>
+                {!typedText && (
+                  <span className="absolute top-0 left-0 text-gray-400 text-base pointer-events-none">
+                    Ask anything. Type @ for mentions and / for shortcuts.
                   </span>
-                  {!typedText && (
-                    <span className="absolute text-gray-400 text-base pointer-events-none">
-                      Ask anything. Type @ for mentions and / for shortcuts.
-                    </span>
-                  )}
-                </div>
+                )}
+              </div>
+              
+              {/* Icons Row - Right Aligned */}
+              <div className="flex justify-end items-center gap-2">
+                {/* Attach Icon */}
+                <button className="p-2 rounded-lg bg-transparent hover:bg-[#4f4f4f] transition-colors">
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                  </svg>
+                </button>
                 
-                {/* Right Icons */}
-                <div className="flex items-center gap-2">
-                  {/* Attach Icon */}
-                  <button className="p-2 rounded-lg bg-transparent hover:bg-[#4f4f4f] transition-colors">
-                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-                    </svg>
-                  </button>
-                  
-                  {/* Mic Icon */}
-                  <button className="p-2 rounded-lg bg-transparent hover:bg-[#4f4f4f] transition-colors">
-                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                    </svg>
-                  </button>
-                  
-                  {/* Submit Button - YELLOW with RIGHT arrow */}
-                  <button className="p-2 rounded-lg bg-[#FFD700] hover:bg-[#FFC107] transition-colors">
-                    <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                    </svg>
-                  </button>
-                </div>
+                {/* Mic Icon */}
+                <button className="p-2 rounded-lg bg-transparent hover:bg-[#4f4f4f] transition-colors">
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                  </svg>
+                </button>
+                
+                {/* Submit Button - YELLOW with RIGHT arrow */}
+                <button className="p-2 rounded-lg bg-[#FFD700] hover:bg-[#FFC107] transition-colors">
+                  <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </button>
               </div>
             </div>
           </div>
           
           {/* Fake Results */}
-          <div className={`text-center text-[var(--text-secondary)] transition-opacity duration-500 ${showResults ? 'opacity-100' : 'opacity-0'}`}>
+          <div className={`text-center text-[var(--text-secondary)] transition-opacity hidden duration-500 ${showResults ? 'opacity-100' : 'opacity-0'}`}>
             {!showReadyMessage ? (
               <>
                 <p className="mb-2">
